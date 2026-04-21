@@ -449,6 +449,30 @@ void loadAll() {
             graph.addEdge(f,t,w);
         fg.close();
     }
+
+    // load tasks
+    ifstream ft("tasks.dat");
+    if (ft) {
+        int vid; char d[60];
+        while (ft >> vid) {
+            ft.ignore();
+            ft.getline(d, 59);
+            taskQ.enqueue(vid, d);
+        }
+        ft.close();
+    }
+
+    // load history
+    ifstream fh("history.dat");
+    if (fh) {
+        int n; fh >> n;
+        for (int i=0;i<n;i++) {
+            Incident inc;
+            fh >> inc.id >> inc.locationId >> inc.type >> inc.urgency >> inc.status >> inc.timeClosed;
+            avlRoot = avlInsert(avlRoot, inc);
+        }
+        fh.close();
+    }
 }
 
 void saveAll() {
@@ -483,6 +507,35 @@ void saveAll() {
         while (e) { fg << "E " << graph.verts[i].id << " " << e->dest << " " << e->weight << "\n"; e=e->next; }
     }
     fg.close();
+
+    // save tasks
+    ofstream ft("tasks.dat");
+    Task* ct = taskQ.front;
+    while (ct) {
+        ft << ct->vehicleId << " " << ct->desc << "\n";
+        ct = ct->next;
+    }
+    ft.close();
+
+    // save history
+    ofstream fh("history.dat");
+    // count nodes
+    int hCnt = 0;
+    auto countNodes = [&](auto& self, AVLNode* n) -> void {
+        if (!n) return;
+        self(self, n->left); hCnt++; self(self, n->right);
+    };
+    countNodes(countNodes, avlRoot);
+    fh << hCnt << "\n";
+    auto writeNodes = [&](auto& self, AVLNode* n) -> void {
+        if (!n) return;
+        self(self, n->left);
+        fh << n->data.id << " " << n->data.locationId << " " << n->data.type << " "
+           << n->data.urgency << " " << n->data.status << " " << n->data.timeClosed << "\n";
+        self(self, n->right);
+    };
+    writeNodes(writeNodes, avlRoot);
+    fh.close();
 
     cout << "\n  State saved.\n";
 }

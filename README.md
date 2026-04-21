@@ -12,9 +12,10 @@ A C++ terminal-based application utilizing advanced Data Structures (Graphs, Has
 
 ## Screenshots
 
-*(Screenshots will be added here!)*
-<!-- Add your screenshot to assets/ and link it here: -->
-<!-- ![Dashboard](assets/screenshot.png) -->
+![Home Page](assets/Home%20Page.png)
+![Map](assets/Map.png)
+![Task Queue](assets/Task%20Queue.png)
+![Report](assets/Report.png)
 
 ## Prerequisites
 
